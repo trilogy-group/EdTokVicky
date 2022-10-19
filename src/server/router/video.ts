@@ -12,14 +12,21 @@ export const videoRouter = createRouter()
     resolve: async ({ ctx: { prisma, session }, input }) => {
       const skip = input.cursor || 0;
       const items = await prisma.video.findMany({
-        take: 10,
+        where: {
+          done: {
+            equals: false,
+          }
+        },
+        take: 4,
         skip,
         include: {
           user: true,
+          post: true,
+          question: true,
           _count: { select: { likes: true, comments: true } },
         },
         orderBy: {
-          createdAt: "desc",
+          createdAt: "asc",
         },
       });
       let likes: Like[] = [];
@@ -52,7 +59,7 @@ export const videoRouter = createRouter()
             (following) => following.followingId === item.userId
           ),
         })),
-        nextSkip: items.length === 0 ? null : skip + 10,
+        nextSkip: items.length === 0 ? null : skip + 4,
       };
     },
   })
@@ -80,17 +87,14 @@ export const videoRouter = createRouter()
 
       const skip = input.cursor || 0;
       const items = await prisma.video.findMany({
-        take: 10,
+        take: 4,
         skip,
-        where: {
-          userId: { in: followingIds },
-        },
         include: {
           user: true,
           _count: { select: { likes: true, comments: true } },
         },
         orderBy: {
-          createdAt: "desc",
+          createdAt: "asc",
         },
       });
       let likes: Like[] = [];
@@ -121,7 +125,7 @@ export const videoRouter = createRouter()
             (following) => following.followingId === item.userId
           ),
         })),
-        nextSkip: items.length === 0 ? null : skip + 10,
+        nextSkip: items.length === 0 ? null : skip + 4,
       };
     },
   })

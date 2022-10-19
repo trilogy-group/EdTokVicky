@@ -112,19 +112,19 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
       <Meta
         title={`${video.user.name} on TopTop`}
         description="Video | TopTop"
-        image={video.coverURL}
+        image={"/" + video.post.coverURL}
       />
 
       <div className="flex flex-col lg:flex-row lg:h-screen items-stretch">
         <div className="lg:flex-grow flex justify-center items-center relative bg-[#1E1619]">
           <video
             className="w-auto h-auto max-w-full max-h-[600px] lg:max-h-full"
-            src={video.videoURL}
+            src={"/" + video.post.videoURL}
             muted={isMuted}
             onVolumeChange={(e: any) => setIsMuted(e.target.muted)}
             autoPlay
             loop
-            poster={video.coverURL}
+            poster={"/" + video.post.coverURL}
             controls
             playsInline
           ></video>
@@ -196,7 +196,7 @@ const Video: NextPage<VideoProps> = ({ video, href, title }) => {
               className="my-3"
               style={{ wordWrap: "break-word", overflowWrap: "break-word" }}
             >
-              {video.caption}
+              {video.post.caption}
             </p>
 
             <div className="flex justify-between items-center">
@@ -351,20 +351,19 @@ export const getServerSideProps = async ({
   res,
 }: GetServerSidePropsContext) => {
   const session = (await getServerSession(req, res, authOptions)) as any;
+  console.log(params?.id);
   try {
     const id = params?.id as string;
 
     if (!id) throw new Error();
-
+    
     const video = await prisma.video.findFirstOrThrow({
       where: { id },
       select: {
         id: true,
-        videoURL: true,
-        coverURL: true,
-        caption: true,
         _count: { select: { likes: true } },
         user: { select: { id: true, image: true, name: true } },
+        post: true,
         comments: {
           orderBy: { createdAt: "desc" },
           select: {
@@ -376,6 +375,8 @@ export const getServerSideProps = async ({
         },
       },
     });
+
+    console.log(video);
 
     let likedByMe = false;
     let followedByMe = false;
@@ -414,6 +415,7 @@ export const getServerSideProps = async ({
       },
     };
   } catch (error) {
+    console.log (error)
     return {
       props: {},
       notFound: true,

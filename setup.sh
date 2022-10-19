@@ -11,4 +11,4 @@ sudo mysql -u root -pVicky1234 -e "FLUSH PRIVILEGES;"
 npx prisma generate
 npx prisma migrate dev
 npm run build
-npm run start
+npm run dev

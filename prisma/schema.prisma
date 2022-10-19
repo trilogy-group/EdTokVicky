@@ -66,9 +66,13 @@ model VerificationToken {
 
 // Main models
 model Post {
-  id      String  @id @default(cuid())
-  caption String  @db.Text
-  Video   Video[]
+  id          String  @id @default(cuid())
+  caption     String    @db.Text
+  videoURL    String    @db.Text
+  coverURL    String    @db.Text
+  videoWidth  Int
+  videoHeight Int
+  Video       Video[]
 }
 
 model Question {
@@ -78,24 +82,18 @@ model Question {
 }
 
 model Video {
-  id          String    @id @default(cuid())
-  caption     String    @db.Text
-  videoURL    String    @db.Text
-  coverURL    String    @db.Text
-  videoWidth  Int
-  videoHeight Int
+  id          String      @id @default(cuid())
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime?   @updatedAt
+  done        Boolean     @default(false)
   userId      String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime?  @updatedAt
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId      String?
-  post        Post?      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  question    Question?   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  post        Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   questionId  String?
-  question    Question?  @relation(fields: [questionId], references: [id], onDelete: Cascade)
   likes       Like[]
   comments    Comment[]
-
-  @@fulltext([caption])
 }
 
 model Like {

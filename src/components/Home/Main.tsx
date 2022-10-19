@@ -78,7 +78,7 @@ const Main: FC<MainProps> = ({ origin }) => {
       <div className="flex-grow text-center my-4">There is no video yet</div>
     );
 
-  return (
+    return (
     <div className="flex-grow">
       {data?.pages.map((page) =>
         page.items.map((video) => (
@@ -94,14 +94,14 @@ const Main: FC<MainProps> = ({ origin }) => {
       {/* At the bottom to detect infinite scroll */}
       <InView
         fallbackInView
-        onChange={(inView) => {
-          if (inView && !isFetchingNextPage && hasNextPage) {
+        onChange={(inView) => { console.log("in")
+          //if (inView && !isFetchingNextPage && hasNextPage) {
             fetchNextPage();
-          }
+          //}
         }}
         rootMargin="0px 0px 1500px 0px"
       >
-        {({ ref }) => <div ref={ref} className="h-10"></div>}
+        {({ ref }) => <div ref={ref} className="h-4"></div>}
       </InView>
     </div>
   );
