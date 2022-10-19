@@ -23,7 +23,7 @@ export const videoRouter = createRouter()
           user: true,
           post: true,
           question: true,
-          _count: { select: { likes: true, comments: true } },
+          //   _count: { select: { likes: true, comments: true } },
         },
         orderBy: {
           createdAt: "asc",
@@ -33,28 +33,30 @@ export const videoRouter = createRouter()
       let followings: Follow[] = [];
 
       if (session?.user?.id) {
-        [likes, followings] = await Promise.all([
-          prisma.like.findMany({
-            where: {
-              userId: session.user.id,
-              videoId: { in: items.map((item) => item.id) },
-            },
-          }),
-          prisma.follow.findMany({
-            where: {
-              followerId: session.user.id,
-              followingId: {
-                in: items.map((item) => item.userId),
-              },
-            },
-          }),
-        ]);
+        /*
+                [likes, followings] = await Promise.all([
+                  prisma.like.findMany({
+                    where: {
+                      userId: session.user.id,
+                      videoId: { in: items.map((item) => item.id) },
+                    },
+                  }),
+                  prisma.follow.findMany({
+                    where: {
+                      followerId: session.user.id,
+                      followingId: {
+                        in: items.map((item) => item.userId),
+                      },
+                    },
+                  }),
+                ]);
+        */
       }
 
       return {
         items: items.map((item) => ({
           ...item,
-          likedByMe: likes.some((like) => like.videoId === item.id),
+          //likedByMe: likes.some((like) => like.videoId === item.id),
           followedByMe: followings.some(
             (following) => following.followingId === item.userId
           ),
@@ -91,7 +93,7 @@ export const videoRouter = createRouter()
         skip,
         include: {
           user: true,
-          _count: { select: { likes: true, comments: true } },
+          // _count: { select: { likes: true, comments: true } },
         },
         orderBy: {
           createdAt: "asc",
@@ -99,28 +101,28 @@ export const videoRouter = createRouter()
       });
       let likes: Like[] = [];
       let followings: Follow[] = [];
-
-      [likes, followings] = await Promise.all([
-        prisma.like.findMany({
-          where: {
-            userId: session?.user?.id!,
-            videoId: { in: items.map((item) => item.id) },
-          },
-        }),
-        prisma.follow.findMany({
-          where: {
-            followerId: session?.user?.id!,
-            followingId: {
-              in: items.map((item) => item.userId),
-            },
-          },
-        }),
-      ]);
-
+      /*
+            [likes, followings] = await Promise.all([
+              prisma.like.findMany({
+                where: {
+                  userId: session?.user?.id!,
+                  videoId: { in: items.map((item) => item.id) },
+                },
+              }),
+              prisma.follow.findMany({
+                where: {
+                  followerId: session?.user?.id!,
+                  followingId: {
+                    in: items.map((item) => item.userId),
+                  },
+                },
+              }),
+            ]);
+      */
       return {
         items: items.map((item) => ({
           ...item,
-          likedByMe: likes.some((like) => like.videoId === item.id),
+          //likedByMe: likes.some((like) => like.videoId === item.id),
           followedByMe: followings.some(
             (following) => following.followingId === item.userId
           ),
@@ -145,6 +147,8 @@ export const videoRouter = createRouter()
         },
       });
       console.log("createdPost ", createdPost);
+
+      /*
       const createdVideo = await prisma.video.create({
         data: {
           userId: session?.user?.id!,
@@ -153,15 +157,39 @@ export const videoRouter = createRouter()
         },
       });
       console.log("video ", createdVideo);
+*/
+
+      await prisma.video.upsert({
+        where: {
+          video_identifier: {
+            userId: session?.user?.id as string,
+            postId: createdPost.id
+          }
+        },
+        update: {},
+        create: {
+          userId: session?.user?.id!,
+          postId: createdPost.id,
+          done: false,
+
+        },
+      });
+
       return createdPost;
     },
   }).mutation("post-got-it", {
     input: z.object({
-      videoId: z.string(),
+      postId: z.string(),
     }),
     async resolve({ ctx: { prisma, session }, input }) {
+      console.log("input post id", input.postId);
       await prisma.video.update({
-        where: { userId: session?.user?.id as string, id: input.videoId },
+        where: {
+          video_identifier: {
+            userId: session?.user?.id as string,
+            postId: input.postId
+          }
+        },
         data: {
           done: true,
         }

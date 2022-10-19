@@ -33,16 +33,16 @@ interface VideoSectionProps {
 
 const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
   const session = useSession();
-
   const likeMutation = trpc.useMutation("like.toggle");
   const followMutation = trpc.useMutation("follow.toggle");
+  const viewedMutation = trpc.useMutation("video.post-got-it");
 
   const [isCurrentlyLiked, setIsCurrentlyLiked] = useState(video.likedByMe);
   const [isCurrentlyFollowed, setIsCurrentlyFollowed] = useState<
     undefined | boolean
   >(undefined);
 
-  const videoURL = `${origin}/video/${video.id}`;
+  const videoURL = `${origin}/video/${video.post.id}`;
 
   const toggleLike = () => {
     if (!session.data?.user) {
@@ -51,7 +51,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
       likeMutation
         .mutateAsync({
           isLiked: !isCurrentlyLiked,
-          videoId: video.id,
+          videoId: video.post.id,
         })
         .then(() => {
           refetch();
@@ -90,6 +90,18 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
         : !isCurrentlyFollowed
     );
   };
+  const handleGotIt = () => {
+    if (!session.data?.user) {
+      toast("You need to log in");
+      return;
+    }
+    console.log(video.post.id);
+    viewedMutation.mutateAsync({
+      postId: video.post.id
+    });
+
+  }
+
   if (null === video.questionId)
     return (
       <div key={video.post.id} className="flex items-start p-2 lg:p-4 gap-3">
@@ -125,8 +137,8 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
                 <button
                   onClick={() => toggleFollow()}
                   className={`py-1 px-3 rounded text-sm mt-2 ${isCurrentlyFollowed ?? video.followedByMe
-                      ? "border hover:bg-[#F8F8F8] transition"
-                      : "border border-pink text-pink hover:bg-[#FFF4F5] transition"
+                    ? "border hover:bg-[#F8F8F8] transition"
+                    : "border border-pink text-pink hover:bg-[#FFF4F5] transition"
                     }`}
                 >
                   {isCurrentlyFollowed ?? video.followedByMe
@@ -140,8 +152,8 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
             <Link href={`/video/${video.id}`}>
               <a
                 className={`${video.post.videoHeight > video.post.videoWidth * 1.3
-                    ? "md:h-[600px]"
-                    : "flex-grow h-auto"
+                  ? "md:h-[600px]"
+                  : "flex-grow h-auto"
                   } block bg-[#3D3C3D] rounded-md overflow-hidden flex-grow h-auto md:flex-grow-0`}
               >
                 <VideoPlayer
@@ -151,6 +163,9 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
               </a>
             </Link>
             <div className="flex flex-col gap-1 lg:gap-2">
+              <button className="lg:w-12 lg:h-12 w-7 h-7 bg-[#F1F1F2] fill-black rounded-full" onClick={() => { console.log("I will memorize that"); handleGotIt() }}>
+                <img src="/memorizeThatIcon.png"></img>
+              </button>
               <button
                 onClick={() => toggleLike()}
                 className="lg:w-12 lg:h-12 w-7 h-7 bg-[#F1F1F2] fill-black flex justify-center items-center rounded-full"
@@ -161,7 +176,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
                 />
               </button>
               <p className="text-center text-xs font-semibold">
-                {formatNumber(video._count.likes)}
+
               </p>
               <Link href={`/video/${video.id}`}>
                 <a className="lg:w-12 lg:h-12 w-7 h-7 bg-[#F1F1F2] fill-black flex justify-center items-center rounded-full">
@@ -169,7 +184,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
                 </a>
               </Link>
               <p className="text-center text-xs font-semibold">
-                {formatNumber(video._count.comments)}
+
               </p>
               <div className="relative group">
                 <button className="lg:w-12 lg:h-12 w-7 h-7 bg-[#F1F1F2] fill-black flex justify-center items-center rounded-full">
@@ -266,8 +281,8 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
                 <button
                   onClick={() => toggleFollow()}
                   className={`py-1 px-3 rounded text-sm mt-2 ${isCurrentlyFollowed ?? video.followedByMe
-                      ? "border hover:bg-[#F8F8F8] transition"
-                      : "border border-pink text-pink hover:bg-[#FFF4F5] transition"
+                    ? "border hover:bg-[#F8F8F8] transition"
+                    : "border border-pink text-pink hover:bg-[#FFF4F5] transition"
                     }`}
                 >
                   {isCurrentlyFollowed ?? video.followedByMe

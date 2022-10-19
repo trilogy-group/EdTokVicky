@@ -78,13 +78,13 @@ const Main: FC<MainProps> = ({ origin }) => {
       <div className="flex-grow text-center my-4">There is no video yet</div>
     );
 
-    return (
+  return (
     <div className="flex-grow">
       {data?.pages.map((page) =>
         page.items.map((video) => (
           <VideoSection
             video={video}
-            key={video.id}
+            key={video.post.id}
             refetch={refetch}
             origin={origin}
           />
@@ -94,9 +94,10 @@ const Main: FC<MainProps> = ({ origin }) => {
       {/* At the bottom to detect infinite scroll */}
       <InView
         fallbackInView
-        onChange={(inView) => { console.log("in")
+        onChange={(inView) => {
+          console.log("in")
           //if (inView && !isFetchingNextPage && hasNextPage) {
-            fetchNextPage();
+          fetchNextPage();
           //}
         }}
         rootMargin="0px 0px 1500px 0px"
