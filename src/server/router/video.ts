@@ -13,9 +13,11 @@ export const videoRouter = createRouter()
       const skip = input.cursor || 0;
       const items = await prisma.video.findMany({
         where: {
-          done: {
-            equals: false,
-          }
+          /*
+                    done: {
+                      equals: false,
+                    }
+          */
         },
         take: 4,
         skip,
@@ -179,9 +181,17 @@ export const videoRouter = createRouter()
   }).mutation("post-got-it", {
     input: z.object({
       postId: z.string(),
+      caption: z.string()
     }),
     async resolve({ ctx: { prisma, session }, input }) {
       console.log("input post id", input.postId);
+
+      const createdQuestion = await prisma.question.create({
+        data: {
+          caption: input.caption,
+        },
+      });
+
       await prisma.video.update({
         where: {
           video_identifier: {
@@ -191,6 +201,7 @@ export const videoRouter = createRouter()
         },
         data: {
           done: true,
+          questionId: createdQuestion.id
         }
       });
     },

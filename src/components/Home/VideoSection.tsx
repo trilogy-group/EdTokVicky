@@ -100,16 +100,17 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
       toast("You need to log in");
       return;
     }
-    console.log(video.post.id);
+    console.log(video.post);
     viewedMutation.mutateAsync({
-      postId: video.post.id
+      postId: video.post.id,
+      caption: video.post.caption
     });
 
   }
 
   console.log(videoURL);
 
-  if (null === video.questionId)
+  if (null === video.questionId && video.done == false)
     return (
       <div key={video.post.id} className="flex items-start p-2 lg:p-4 gap-3">
         <Link href={`/user/${video.user.id}`}>
@@ -253,7 +254,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
         </div>
       </div>
     );
-  else
+  else if (video.question?.caption)
     return (
       <div key={video?.question.id} className="flex items-start p-2 lg:p-4 gap-3">
         <Link href={`/user/${video.user.id}`}>
@@ -279,7 +280,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
                 <a className="text-sm hover:underline">{video.user.name}</a>
               </Link>
               <p style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
-                {video.question.caption}
+                Quiz: What is {video.question.caption}?
               </p>
             </div>
             {/* @ts-ignore */}
