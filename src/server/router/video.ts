@@ -129,7 +129,7 @@ export const videoRouter = createRouter()
       };
     },
   })
-  .mutation("create", {
+  .mutation("create-post", {
     input: z.object({
       caption: z.string(),
       videoURL: z.string().url(),
@@ -138,12 +138,33 @@ export const videoRouter = createRouter()
       videoHeight: z.number().gt(0),
     }),
     async resolve({ ctx: { prisma, session }, input }) {
-      const created = await prisma.video.create({
+      const createdPost = await prisma.post.create({
         data: {
           ...input,
-          userId: session?.user?.id!,
+          id: session?.user?.id!,
         },
       });
-      return created;
+      console.log("createdPost ", createdPost);
+      const createdVideo = await prisma.video.create({
+        data: {
+          userId: session?.user?.id!,
+          done: false,
+          postId: createdPost.id,
+        },
+      });
+      console.log("video ", createdVideo);
+      return createdPost;
+    },
+  }).mutation("post-got-it", {
+    input: z.object({
+      videoId: z.string(),
+    }),
+    async resolve({ ctx: { prisma, session }, input }) {
+      await prisma.video.update({
+        where: { userId: session?.user?.id as string, id: input.videoId },
+        data: {
+          done: true,
+        }
+      });
     },
   });

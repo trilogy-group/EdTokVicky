@@ -15,7 +15,7 @@ import { authOptions } from "./api/auth/[...nextauth]";
 const Upload: NextPage = () => {
   const router = useRouter();
 
-  const uploadMutation = trpc.useMutation("video.create");
+  const uploadMutation = trpc.useMutation("video.create-post");
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -214,9 +214,8 @@ const Upload: NextPage = () => {
                   onDragEnter={dragFocus}
                   onDragOver={dragFocus}
                   onClick={() => inputRef.current?.click()}
-                  className={`w-[250px] flex-shrink-0 border-2 border-gray-300 rounded-md border-dashed flex flex-col items-center p-8 cursor-pointer hover:border-red-1 transition ${
-                    isFileDragging ? "border-red-1" : ""
-                  }`}
+                  className={`w-[250px] flex-shrink-0 border-2 border-gray-300 rounded-md border-dashed flex flex-col items-center p-8 cursor-pointer hover:border-red-1 transition ${isFileDragging ? "border-red-1" : ""
+                    }`}
                 >
                   <BsFillCloudUploadFill className="fill-[#B0B0B4] w-10 h-10" />
                   <h1 className="font-semibold mt-4 mb-2">
