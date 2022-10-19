@@ -26,6 +26,11 @@ interface VideoSectionProps {
     };
     likedByMe: boolean;
     followedByMe: boolean;
+    post: Post;
+    question?: {
+      caption: string;
+      id: string;
+    };
   };
   origin: string;
   refetch: Function;
@@ -102,6 +107,8 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
 
   }
 
+  console.log(videoURL);
+
   if (null === video.questionId)
     return (
       <div key={video.post.id} className="flex items-start p-2 lg:p-4 gap-3">
@@ -149,7 +156,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
             )}
           </div>
           <div className="flex items-end gap-5">
-            <Link href={`/video/${video.id}`}>
+            <Link href={`/video/${video.post.id}`}>
               <a
                 className={`${video.post.videoHeight > video.post.videoWidth * 1.3
                   ? "md:h-[600px]"
@@ -178,7 +185,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
               <p className="text-center text-xs font-semibold">
 
               </p>
-              <Link href={`/video/${video.id}`}>
+              <Link href={`/video/${video.post.id}`}>
                 <a className="lg:w-12 lg:h-12 w-7 h-7 bg-[#F1F1F2] fill-black flex justify-center items-center rounded-full">
                   <FaCommentDots className="lg:w-6 lg:h-6 h-4 w-4 scale-x-[-1]" />
                 </a>
@@ -248,7 +255,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
     );
   else
     return (
-      <div key={video.question.id} className="flex items-start p-2 lg:p-4 gap-3">
+      <div key={video?.question.id} className="flex items-start p-2 lg:p-4 gap-3">
         <Link href={`/user/${video.user.id}`}>
           <a className="flex-shrink-0 rounded-full">
             <Image

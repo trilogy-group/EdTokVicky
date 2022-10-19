@@ -143,7 +143,6 @@ export const videoRouter = createRouter()
       const createdPost = await prisma.post.create({
         data: {
           ...input,
-          id: session?.user?.id!,
         },
       });
       console.log("createdPost ", createdPost);

@@ -160,6 +160,18 @@ const Upload: NextPage = () => {
     }
   };
 
+  const populateDB = async () => {
+    for (let i = 0; i < 5; i++) {
+      await uploadMutation.mutateAsync({
+        caption: "object number" + i,
+        coverURL: "https://media.discordapp.net/attachments/1023960935779553320/1032364555696881685/cover.png",
+        videoURL: "https://discloud-storage.herokuapp.com/file/8782bf897551d69f638344bae9be575b",
+        videoHeight: 360,
+        videoWidth: 640
+      });
+    }
+  };
+
   const dragBlur: DragEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -309,6 +321,12 @@ const Upload: NextPage = () => {
                     Post
                   </button>
                 </div>
+                <button
+                  onClick={() => populateDB()}
+                  className={`flex justify-center items-center gap-2 py-3 min-w-[170px] mt-5 hover:brightness-90 transition text-white bg-red-1 disabled:text-gray-400 disabled:bg-gray-200`}
+                >
+                  Populate the DB
+                </button>
               </div>
             </div>
           </div>
