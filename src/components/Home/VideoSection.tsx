@@ -102,7 +102,6 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
       toast("You need to log in");
       return;
     }
-    console.log(video.post);
     viewedMutation.mutateAsync({
       postId: video.post.id,
       caption: video.post.caption
@@ -113,14 +112,12 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
   const handleRadioButtonChange = (e: any) => {
     setChoice(e.target.value as string);
     choiceVariable.current = e.target.value as string;
-    console.log(e.target.value);
     postQuestionAnswerMutation.mutateAsync({
       score: 5,
       postId: video.post.id
     });
   };
 
-  console.log(videoURL);
 
   if (null === video.questionId && video.done == false)
     return (
@@ -183,7 +180,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
               </a>
             </Link>
             <div className="flex flex-col gap-1 lg:gap-2">
-              <button className="lg:w-12 lg:h-12 w-7 h-7 bg-[#F1F1F2] fill-black rounded-full" onClick={() => { console.log("I will memorize that"); handleGotIt() }}>
+              <button className="lg:w-12 lg:h-12 w-7 h-7 bg-[#F1F1F2] fill-black rounded-full" onClick={() => { handleGotIt() }}>
                 <img src="/memorizeThatIcon.png"></img>
               </button>
               <button
