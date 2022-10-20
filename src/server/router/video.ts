@@ -33,7 +33,6 @@ export const videoRouter = createRouter()
       });
       let likes: Like[] = [];
       let followings: Follow[] = [];
-      let question: Question;
 
       if (session?.user?.id) {
         /*
@@ -54,7 +53,6 @@ export const videoRouter = createRouter()
                   }),
                 ]);
         */
-        console.log("the number of items ", items.length);
       }
 
       return {
@@ -65,7 +63,7 @@ export const videoRouter = createRouter()
             (following) => following.followingId === item.userId
           ),
           post: item.post,
-          question: question,
+          question: item.question,
         })),
         nextSkip: items.length === 0 ? null : skip + 4,
       };

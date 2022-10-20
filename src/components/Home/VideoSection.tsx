@@ -2,7 +2,7 @@ import { User, Video, Post, Question } from "@prisma/client";
 import Image from "next/future/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { FC, useState } from "react";
+import { FC, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { AiFillHeart, AiFillTwitterCircle } from "react-icons/ai";
 import { BiLink } from "react-icons/bi";
@@ -28,7 +28,7 @@ interface VideoSectionProps {
     question?: {
       caption: string;
       id: string;
-    };
+    } | null;
   };
   origin: string;
   refetch: Function;
@@ -47,6 +47,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
   >(undefined);
 
   const [choice, setChoice] = useState<string>("");
+  var choiceVariable = useRef<string>("");
 
   const videoURL = `${origin}/video/${video.post.id}`;
 
@@ -111,6 +112,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
 
   const handleRadioButtonChange = (e: any) => {
     setChoice(e.target.value as string);
+    choiceVariable.current = e.target.value as string;
     console.log(e.target.value);
     postQuestionAnswerMutation.mutateAsync({
       score: 5,
@@ -290,7 +292,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
                 <a className="text-sm hover:underline">{video.user.name}</a>
               </Link>
 
-              {choice === "" &&
+              {choiceVariable.current === "" &&
                 <div>
                   <p style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
                     Quiz: What is {video.question.caption}?
@@ -328,7 +330,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
     );
   else
     return (
-      <div>Something went wrong</div>
+      <div>Something went wrong {video.question} aa</div>
     );
 };
 
