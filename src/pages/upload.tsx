@@ -149,7 +149,7 @@ const Upload: NextPage = () => {
 
       setIsLoading(false);
 
-      router.push(`/video/${created.id}`);
+      //router.push(`/video/${created.id}`);
     } catch (error) {
       console.log(error);
       setIsLoading(false);

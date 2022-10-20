@@ -18,6 +18,7 @@ export const videoRouter = createRouter()
                       equals: false,
                     }
           */
+          userId: session?.user?.id as string
         },
         take: 4,
         skip,
