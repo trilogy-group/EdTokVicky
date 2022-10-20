@@ -84,7 +84,7 @@ const Main: FC<MainProps> = ({ origin }) => {
         page.items.map((video) => (
           <VideoSection
             video={video}
-            key={video.post.id}
+            key={video.post?.id}
             refetch={refetch}
             origin={origin}
           />

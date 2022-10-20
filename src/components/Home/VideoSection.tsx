@@ -17,13 +17,11 @@ import { trpc } from "@/utils/trpc";
 
 import VideoPlayer from "./VideoPlayer";
 
+import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
+
 interface VideoSectionProps {
   video: Video & {
     user: User;
-    _count: {
-      likes: number;
-      comments: number;
-    };
     likedByMe: boolean;
     followedByMe: boolean;
     post: Post;
@@ -41,11 +39,14 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
   const likeMutation = trpc.useMutation("like.toggle");
   const followMutation = trpc.useMutation("follow.toggle");
   const viewedMutation = trpc.useMutation("video.post-got-it");
+  const postQuestionAnswerMutation = trpc.useMutation("video.post-question-answer");
 
   const [isCurrentlyLiked, setIsCurrentlyLiked] = useState(video.likedByMe);
   const [isCurrentlyFollowed, setIsCurrentlyFollowed] = useState<
     undefined | boolean
   >(undefined);
+
+  const [choice, setChoice] = useState<string>("");
 
   const videoURL = `${origin}/video/${video.post.id}`;
 
@@ -107,6 +108,15 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
     });
 
   }
+
+  const handleRadioButtonChange = (e: any) => {
+    setChoice(e.target.value as string);
+    console.log(e.target.value);
+    postQuestionAnswerMutation.mutateAsync({
+      score: 5,
+      postId: video.post.id
+    });
+  };
 
   console.log(videoURL);
 
@@ -279,9 +289,22 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
               <Link href={`/user/${video.user.id}`}>
                 <a className="text-sm hover:underline">{video.user.name}</a>
               </Link>
-              <p style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
-                Quiz: What is {video.question.caption}?
-              </p>
+
+              {choice === "" &&
+                <div>
+                  <p style={{ wordWrap: "break-word", overflowWrap: "break-word" }}>
+                    Quiz: What is {video.question.caption}?
+                  </p>
+                  <RadioGroup
+                    value={choice}
+                    onChange={handleRadioButtonChange}
+                  >
+                    {video.question.caption?.split('').map((op, idx) => {
+                      return <FormControlLabel value={op} key={idx} control={<Radio />} label={op}
+                        className={`bg-opacity-70`} />
+                    })}
+                  </RadioGroup>
+                </div>}
             </div>
             {/* @ts-ignore */}
             {video.userId !== session.data?.user.id && (

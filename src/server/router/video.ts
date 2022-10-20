@@ -53,6 +53,7 @@ export const videoRouter = createRouter()
                   }),
                 ]);
         */
+        console.log("the number of items ", items.length);
       }
 
       return {
@@ -95,7 +96,8 @@ export const videoRouter = createRouter()
         skip,
         include: {
           user: true,
-          // _count: { select: { likes: true, comments: true } },
+          //_count: { select: { likes: true, comments: true } },
+          post: true
         },
         orderBy: {
           createdAt: "asc",
@@ -124,10 +126,11 @@ export const videoRouter = createRouter()
       return {
         items: items.map((item) => ({
           ...item,
-          //likedByMe: likes.some((like) => like.videoId === item.id),
+          likedByMe: false,
           followedByMe: followings.some(
             (following) => following.followingId === item.userId
           ),
+          post: item.post
         })),
         nextSkip: items.length === 0 ? null : skip + 4,
       };
@@ -202,6 +205,26 @@ export const videoRouter = createRouter()
         data: {
           done: true,
           questionId: createdQuestion.id
+        }
+      });
+    },
+  }).mutation("post-question-answer", {
+    input: z.object({
+      score: z.number().gt(0),
+      postId: z.string()
+    }),
+    async resolve({ ctx: { prisma, session }, input }) {
+      console.log("post id of the question", input.postId);
+
+      await prisma.video.update({
+        where: {
+          video_identifier: {
+            userId: session?.user?.id as string,
+            postId: input.postId
+          }
+        },
+        data: {
+          score: input.score
         }
       });
     },

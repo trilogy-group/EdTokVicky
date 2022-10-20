@@ -93,6 +93,7 @@ model Video {
   post        Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   questionId  String?
+  score       Int?
 
   @@id([postId, userId], name: "video_identifier")
   @@unique([postId, userId])
