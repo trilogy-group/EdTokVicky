@@ -264,7 +264,7 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
         </div>
       </div>
     );
-  else if (video.question?.caption)
+  else if (video.question != undefined)
     return (
       <div key={video?.question.id} className="flex items-start p-2 lg:p-4 gap-3">
         <Link href={`/user/${video.user.id}`}>
@@ -325,6 +325,10 @@ const VideoSection: FC<VideoSectionProps> = ({ video, refetch, origin }) => {
           </div>
         </div>
       </div>
+    );
+  else
+    return (
+      <div>Something went wrong</div>
     );
 };
 

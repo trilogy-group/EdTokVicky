@@ -90,7 +90,7 @@ model Video {
   userId      String
   postId      String
   question    Question?   @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  post        Post?       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post        Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   questionId  String?
   score       Int?

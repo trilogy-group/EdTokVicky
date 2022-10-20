@@ -1,4 +1,4 @@
-import { Follow, Like } from "@prisma/client";
+import { Follow, Like, Question } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
@@ -33,6 +33,7 @@ export const videoRouter = createRouter()
       });
       let likes: Like[] = [];
       let followings: Follow[] = [];
+      let question: Question;
 
       if (session?.user?.id) {
         /*
@@ -59,10 +60,12 @@ export const videoRouter = createRouter()
       return {
         items: items.map((item) => ({
           ...item,
-          //likedByMe: likes.some((like) => like.videoId === item.id),
+          likedByMe: false,
           followedByMe: followings.some(
             (following) => following.followingId === item.userId
           ),
+          post: item.post,
+          question: question,
         })),
         nextSkip: items.length === 0 ? null : skip + 4,
       };

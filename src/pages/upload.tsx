@@ -161,11 +161,13 @@ const Upload: NextPage = () => {
   };
 
   const populateDB = async () => {
+    const videoURLsToPopulateDB = ["https://discloud-storage.herokuapp.com/file/b08e89a8af9dd7417f187b81d6d972f0", "https://discloud-storage.herokuapp.com/file/f843af106d0ae8a9a4b2349f68b5ad13", "https://discloud-storage.herokuapp.com/file/690275cbee331cff312b1b3ff03492d2", "https://discloud-storage.herokuapp.com/file/b74912e67c99cb09517b3675d1502d6b", "https://discloud-storage.herokuapp.com/file/55ea4d371583a87c91f0fdd40ac2d0f4"];
+    const coverURLsToPopulateDB = ["https://media.discordapp.net/attachments/1023960935779553320/1032490593252806707/cover.png", "https://media.discordapp.net/attachments/1023960935779553320/1032499140950753341/cover.png", "https://media.discordapp.net/attachments/1023960935779553320/1032499202959351859/cover.png", "https://media.discordapp.net/attachments/1023960935779553320/1032499264087130222/cover.png", "https://media.discordapp.net/attachments/1023960935779553320/1032499326762622986/cover.png"];
     for (let i = 0; i < 5; i++) {
       await uploadMutation.mutateAsync({
         caption: "object number" + i,
-        coverURL: "https://media.discordapp.net/attachments/1023960935779553320/1032364555696881685/cover.png",
-        videoURL: "https://discloud-storage.herokuapp.com/file/8782bf897551d69f638344bae9be575b",
+        coverURL: videoURLsToPopulateDB[i] as string,
+        videoURL: coverURLsToPopulateDB[i] as string,
         videoHeight: 360,
         videoWidth: 640
       });
